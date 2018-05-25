@@ -9,10 +9,10 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.test.ESTestCase;
-import org.forward.entitysearch.entitylayoutanalysis.AnalysisEntityLayoutPlugin;
-import org.forward.entitysearch.entitylayoutanalysis.EntityLayoutAnalyzer;
-import org.forward.entitysearch.entitylayoutanalysis.EntityLayoutTokenizer;
-import org.forward.entitysearch.entitylayoutanalysis.EntityLayoutTokenizerFactory;
+import org.forward.entitysearch.elasticsearchanalysis.AnalysisEntityLayoutPlugin;
+import org.forward.entitysearch.elasticsearchanalysis.EntityLayoutAnalyzer;
+import org.forward.entitysearch.elasticsearchanalysis.EntityLayoutTokenizer;
+import org.forward.entitysearch.elasticsearchanalysis.EntityLayoutTokenizerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;

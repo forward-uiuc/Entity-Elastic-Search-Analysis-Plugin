@@ -9,7 +9,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.plugins.PluginInfo;
 import org.elasticsearch.test.ESIntegTestCase;
-import org.forward.entitysearch.entitylayoutanalysis.AnalysisEntityLayoutPlugin;
+import org.forward.entitysearch.elasticsearchanalysis.AnalysisEntityLayoutPlugin;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -2,12 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.elasticsearch</groupId>
-    <artifactId>elasticsearch-analysis-entity-layout</artifactId>
+    <artifactId>entity-elastic-search-analysis-plugin</artifactId>
     <version>5.6.1</version>
     <packaging>jar</packaging>
-    <name>elasticsearch-analysis-entity-layout</name>
-    <url>https://github.com/forward-uiuc/Spring-2018-Entity-Search</url>
-    <description>Elasticsearch Entity Layout Analysis Plugin</description>
+    <name>entity-elastic-search-analysis-plugin</name>
+    <url>https://github.com/forward-uiuc/Entity-Elastic-Search-Analysis-Plugin</url>
+    <description>Entity Elastic Search Analysis Plugin</description>
     <inceptionYear>2018</inceptionYear>
     <licenses>
         <license>
@@ -18,15 +18,15 @@
     </licenses>
     <developers>
         <developer>
-            <id>duydo</id>
-            <name>Duy Do</name>
-            <url>http://duydo.me</url>
+            <id>longpt214</id>
+            <name>Long Pham</name>
+            <url>https://github.com/longpt214</url>
         </developer>
     </developers>
     <scm>
         <connection>scm:git:git@github.com:duydo/elasticsearch-analysis-vietnamese.git</connection>
         <developerConnection>scm:git:git@github.com:duydo/elasticsearch-analysis-vietnamese.git</developerConnection>
-        <url>http://github.com/duydo/elasticsearch-analysis-vietnamese</url>
+        <url>https://github.com/forward-uiuc/Entity-Elastic-Search-Analysis-Plugin</url>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,16 +47,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>vn.hus</groupId>
-            <artifactId>nlp-sd</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>vn.hus</groupId>
-            <artifactId>nlp-tokenizer</artifactId>
-            <version>4.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.test</groupId>
@@ -81,6 +71,19 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+            <classifier>models</classifier>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

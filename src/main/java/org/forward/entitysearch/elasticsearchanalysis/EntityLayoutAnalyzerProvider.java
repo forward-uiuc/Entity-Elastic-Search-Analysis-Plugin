@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.forward.entitysearch.entitylayoutanalysis;
+package org.forward.entitysearch.elasticsearchanalysis;
 
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;

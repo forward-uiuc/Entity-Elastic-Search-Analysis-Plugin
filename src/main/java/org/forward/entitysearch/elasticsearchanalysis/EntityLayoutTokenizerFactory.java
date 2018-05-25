@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.forward.entitysearch.entitylayoutanalysis;
+package org.forward.entitysearch.elasticsearchanalysis;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.elasticsearch.common.settings.Settings;
