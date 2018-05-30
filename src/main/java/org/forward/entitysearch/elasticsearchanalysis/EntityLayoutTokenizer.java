@@ -14,17 +14,25 @@
 
 package org.forward.entitysearch.elasticsearchanalysis;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.CustomizableCoreAnnotations;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.Annotator;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.elasticsearch.SpecialPermission;
+import org.forward.entitysearch.ingestion.ESAnnotatedHTMLDocument;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.*;
 
 
 /**
@@ -36,10 +44,7 @@ public class EntityLayoutTokenizer extends Tokenizer {
 
 	private static final String UNIQUE_ENTITY_TOKEN = "oentityo";
 
-	private Iterator<Integer> entityPositions;
-
     private int offset = 0;
-    private int curPos = 0;
 
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
@@ -55,6 +60,7 @@ public class EntityLayoutTokenizer extends Tokenizer {
     }
 
     private void tokenize(Reader input) throws IOException {
+        System.out.println("NER tokenizing...");
         int numChars;
         char[] buffer = new char[1024];
         StringBuilder stringBuilder = new StringBuilder();
@@ -67,55 +73,102 @@ public class EntityLayoutTokenizer extends Tokenizer {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
-        ArrayList<Integer> entityPos = new ArrayList<>();
-        StringTokenizer tokens = new StringTokenizer(stringBuilder.toString());
-        while (tokens.hasMoreTokens()) {
-            final String token = tokens.nextToken();
-            if (accept(token)) {
-            	    String[] tmp = token.split("\\Q|\\E");
-            	    int pos = Integer.parseInt(tmp[1].split("\\Q+\\E")[0]);
-            	    entityPos.add(pos);
-            }
-            Collections.sort(entityPos);
-            this.entityPositions = entityPos.iterator();
+
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) {
+            // unprivileged code such as scripts do not have SpecialPermission
+            sm.checkPermission(new SpecialPermission());
         }
+        AccessController.doPrivileged((PrivilegedAction<Void>)
+                () -> {
+                    // Privileged code goes here, for example:
+                    Annotation aDoc = new Annotation(stringBuilder.toString());
+                    tokenizer.annotate(aDoc);
+                    tokens = aDoc.get(CoreAnnotations.TokensAnnotation.class);
+                    tokenIterator = tokens.iterator();
+
+                    return null;
+                }
+        );
+        AccessController.doPrivileged((PrivilegedAction<Void>)
+                () -> {
+                    ESAnnotatedHTMLDocument doc = null;
+                    FileInputStream fin = null;
+                    ObjectInputStream ois = null;
+                    try {
+                        fin = new FileInputStream("/Users/longpham/Workspace/EntityAnnotation/serialized/00000.ser");
+                        ois = new ObjectInputStream(fin);
+                        doc = (ESAnnotatedHTMLDocument) ois.readObject();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (doc != null) {
+//                        System.out.println(doc.getTitle());
+//                        System.out.println(doc.get(CoreAnnotations.TokensAnnotation.class).size());
+//                        for (CoreLabel token : doc.get(CoreAnnotations.TokensAnnotation.class)) {
+//                            String word = token.word();
+//                            if (token.containsKey(CustomizableCoreAnnotations.TypeAnnotation.class)) {
+//                                word = token.get(CustomizableCoreAnnotations.TypeAnnotation.class);
+//                            }
+//                            System.out.println(word + " " + token.ner() + " " +
+//                                    token.get(CustomizableCoreAnnotations.LayoutHeightAnnotation.class) + " " +
+//                                    token.get(CustomizableCoreAnnotations.LayoutWidthAnnotation.class));
+//                        }
+//                        System.out.println(doc.getHeight() + " " + doc.getWidth());
+                        tokens = doc.get(CoreAnnotations.TokensAnnotation.class);
+                        tokenIterator = tokens.iterator();
+                    }
+                    return null;
+                }
+        );
+
+//        ArrayList<Integer> entityPos = new ArrayList<>();
+//        StringTokenizer tokenIterator = new StringTokenizer(stringBuilder.toString());
+//        while (tokenIterator.hasMoreTokens()) {
+//            final String token = tokenIterator.nextToken();
+//            if (accept(token)) {
+//            	    String[] tmp = token.split("\\Q|\\E");
+//            	    int pos = Integer.parseInt(tmp[1].split("\\Q+\\E")[0]);
+//            	    entityPos.add(pos);
+//            }
+//            Collections.sort(entityPos);
+//            this.entityPositions = entityPos.iterator();
+//        }
     }
 
     @Override
     public final boolean incrementToken() throws IOException {
         clearAttributes();
-        if (this.entityPositions.hasNext()) {
-        		Integer pos = this.entityPositions.next();
-        		posIncrAtt.setPositionIncrement(pos-curPos);              
-            termAtt.append(UNIQUE_ENTITY_TOKEN);
-            offsetAtt.setOffset(pos,pos);
-            curPos = pos;  
+        if (this.tokenIterator.hasNext()) {
+            CoreLabel token = this.tokenIterator.next();
+            AccessController.doPrivileged((PrivilegedAction<Void>)
+                    () -> {
+                        posIncrAtt.setPositionIncrement(1);
+                        termAtt.append(token.word());
+                        offsetAtt.setOffset(token.beginPosition(),token.endPosition());
+                        return null;
+                    }
+            );
             return true;
         } 
         return false;
     }
 
-    /**
-     * Only accept the word characters.
-     */
-    private final boolean accept(String token) {
-        return token.contains(UNIQUE_ENTITY_TOKEN);
-    }
-
-    @Override
-    public final void end() throws IOException {
-        super.end();
-        final int finalOffset = correctOffset(offset);
-        offsetAtt.setOffset(finalOffset, finalOffset);
-        posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement());
-    }
+//    @Override
+//    public final void end() throws IOException {
+//        super.end();
+//        final int finalOffset = correctOffset(offset);
+//        offsetAtt.setOffset(finalOffset, finalOffset);
+//        posIncrAtt.setPositionIncrement(posIncrAtt.getPositionIncrement());
+//    }
 
     @Override
     public void reset() throws IOException {
         super.reset();
-        offset = 0;
-        curPos = -1;
         tokenize(input);
     }
+
+    private Annotator tokenizer = TokenizerFactory.getInstance().getTokenizer();
+    List<CoreLabel> tokens;
+    private Iterator<CoreLabel> tokenIterator;
 }
