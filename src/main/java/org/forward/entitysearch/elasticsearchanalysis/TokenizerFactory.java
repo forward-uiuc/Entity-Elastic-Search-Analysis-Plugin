@@ -20,11 +20,7 @@ public class TokenizerFactory {
         }
 
         tokenizer = AccessController.doPrivileged(
-                new PrivilegedAction<Annotator>() {
-                    public Annotator run() {
-                        return new StanfordCoreNLP(props);
-                    }
-        });
+                (PrivilegedAction<Annotator>) () -> new StanfordCoreNLP(props));
     }
 
     public static TokenizerFactory getInstance() {

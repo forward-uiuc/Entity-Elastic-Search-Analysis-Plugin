@@ -67,9 +67,10 @@ public class EntityLayoutAnalyzer extends StopwordAnalyzerBase {
 
     @Override
     protected TokenStreamComponents createComponents(String fieldName) {
-        final Tokenizer tokenizer = new EntityLayoutTokenizer();
-        TokenStream tokenStream = new LowerCaseFilter(tokenizer);
-        tokenStream = new StopFilter(tokenStream, stopwords);
-        return new TokenStreamComponents(tokenizer, tokenStream);
+        final Tokenizer tokenizer = new EntityLayoutTokenizer(fieldName);
+//        TokenStream tokenStream = new LowerCaseFilter(tokenizer);
+//        tokenStream = new StopFilter(tokenStream, stopwords);
+//        return new TokenStreamComponents(tokenizer, tokenStream);
+        return new TokenStreamComponents(tokenizer);
     }
 }

@@ -2,6 +2,6 @@ grant {
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
     permission java.lang.RuntimePermission "*";
     permission java.io.FilePermission "*", "read,write";
-    permission java.io.FilePermission "/Users/longpham/Workspace/EntityAnnotation/serialized/00000.ser", "read";
+    permission java.io.FilePermission "<<ALL FILES>>", "read";
     permission java.util.PropertyPermission "*", "read,write";
 };

@@ -21,7 +21,7 @@ import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenizerFactory;
 
 /**
- * @author duydo
+ * @author duydo,longpt214
  */
 public class EntityLayoutTokenizerFactory extends AbstractTokenizerFactory {
 
@@ -36,7 +36,6 @@ public class EntityLayoutTokenizerFactory extends AbstractTokenizerFactory {
 
     @Override
     public Tokenizer create() {
-        return new EntityLayoutTokenizer(sentenceDetectorEnabled, ambiguitiesResolved);
-//    		return new VietnameseTokenizer();
+        return new EntityLayoutTokenizer();
     }
 }
