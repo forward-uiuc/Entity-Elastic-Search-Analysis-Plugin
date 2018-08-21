@@ -1,3 +1,5 @@
+Please see updated README here: https://github.com/forward-uiuc/Forward-Search-Installation-Guide. It contains sufficient to install the entire system. The following README may contain more information and potentially some outdated guideline.
+
 # Elastic Search Analysis Plugin for Entity Layout Info
 
 ## Intro
